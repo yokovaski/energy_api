@@ -3,7 +3,10 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Auth\Factory as Auth;
+use Laravel\Passport\Http\Middleware\CheckClientCredentials;
+use Mockery\Exception;
 
 class Authenticate
 {
@@ -36,7 +39,12 @@ class Authenticate
     public function handle($request, Closure $next, $guard = null)
     {
         if ($this->auth->guard($guard)->guest()) {
-            return response('Unauthorized.', 401);
+
+            try {
+                app(CheckClientCredentials::class)->handle($request, function () {});
+            } catch (AuthenticationException $e) {
+                return response()->json((['status' => 401, 'message' => 'Unauthorized']), 401);
+            }
         }
 
         return $next($request);
