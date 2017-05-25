@@ -29,11 +29,15 @@ $app->group(['prefix' => 'v1'], function () use ($app) {
         });
     }
 
+    $app->post( 'raspberrypis', 'RaspberryPiController@store');
+
     /*
-         * Token protected routes
-         */
+     * Token protected routes
+     */
     $app->group(['middleware' => 'auth:api'], function () use ($app) {
         $app->post('energy', 'EnergyDataController@insertEnergyData');
+
+        $app->put('raspberrypis', 'RaspberryPiController@update');
     });
 });
 

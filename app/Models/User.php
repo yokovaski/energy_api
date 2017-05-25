@@ -30,4 +30,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function raspberryPi()
+    {
+        $this->hasOne('App\Models\RaspberryPi');
+    }
 }

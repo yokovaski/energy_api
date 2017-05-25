@@ -3,12 +3,26 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\RaspberryPi;
 use App\Models\TenSecondMetric;
 use Illuminate\Http\Request;
 
 class EnergyDataController extends Controller
 {
+    /**
+     * EnergyDataController constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
+    /**
+     * Insert new energy data
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function insertEnergyData(Request $request)
     {
         $requestData = $request->all();
@@ -16,6 +30,9 @@ class EnergyDataController extends Controller
 
         $metric = new TenSecondMetric;
 
+        $raspberryPi = RaspberryPi::find($requestData['raspberry_pi_id']);
+
+        $metric->raspberryPi()->associate($raspberryPi);
         $metric->mode = $requestData['mode'];
         $metric->usage_now = $requestData['usage_now'];
         $metric->redelivery_now = $requestData['redelivery_now'];
@@ -30,10 +47,10 @@ class EnergyDataController extends Controller
 
         $metric->save();
 
-        return $this->sendJsonResponse(200, 'received data', $requestData);
+        return $this->sendInsertJsonResponse(200, 'received data', $requestData);
     }
 
-    private function sendJsonResponse($status, $message, $data = [])
+    private function sendInsertJsonResponse($status, $message, $data = [])
     {
         return response()->json(['status' => $status, 'message' => $message, 'data' => $data], $status);
     }
