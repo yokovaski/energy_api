@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Models\RaspberryPi;
 use App\Models\TenSecondMetric;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class EnergyDataController extends Controller
 {
@@ -23,7 +24,7 @@ class EnergyDataController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function insertEnergyData(Request $request)
+    public function store(Request $request)
     {
         $requestData = $request->all();
         $requestData = $requestData['data'];
@@ -47,7 +48,7 @@ class EnergyDataController extends Controller
 
         $metric->save();
 
-        return $this->sendInsertJsonResponse(200, 'received data', $requestData);
+        return $this->sendInsertJsonResponse(Response::HTTP_CREATED, 'received data', $requestData);
     }
 
     private function sendInsertJsonResponse($status, $message, $data = [])

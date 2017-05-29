@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: erwin
- * Date: 25-5-17
- * Time: 22:47
- */
 
 namespace App\Http\Controllers;
 
@@ -41,17 +35,28 @@ class RaspberryPiController extends Controller
         // Validation
         $validatorResponse = $this->validateRequest($request, $this->storeRequestValidationRules());
 
-        $ipAddress = $requestInput['ip_address'];
-        $requestKey = $requestInput['key'];
-
         // Send failed response if validation fails
         if ($validatorResponse !== true) {
             return $this->sendInvalidFieldResponse($validatorResponse);
         }
 
+        $ipAddress = $requestInput['ip_address'];
+
+        if ($ipAddress != $request->getClientIp()) {
+            return $this->sendCustomErrorResponse(Response::HTTP_BAD_REQUEST, 'Invalid IP');
+        }
+
+        $requestKey = $requestInput['key'];
+
         if ($requestKey != env('RPI_KEY'))
         {
             return $this->sendCustomErrorResponse(Response::HTTP_BAD_REQUEST, 'Invalid key');
+        }
+
+        $raspberryPi = RaspberryPi::where('ip_address', $ipAddress)->first();
+
+        if ($raspberryPi instanceof RaspberryPi) {
+            return $this->respondWithItem($raspberryPi, $this->raspberryPiTransformer, Response::HTTP_OK);
         }
 
         $raspberryPi = RaspberryPi::create([
@@ -75,7 +80,8 @@ class RaspberryPiController extends Controller
     private function storeRequestValidationRules()
     {
         $rules = [
-            'ip_address' => 'required|unique:raspberry_pis',
+            'ip_address' => 'required',
+            'key' => 'required',
         ];
 
         return $rules;
