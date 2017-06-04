@@ -35,7 +35,7 @@ $app->group(['prefix' => 'v1'], function () use ($app) {
      * Token protected routes
      */
     $app->group(['middleware' => 'auth:api'], function () use ($app) {
-        $app->post('energy', 'EnergyDataController@insertEnergyData');
+        $app->post('energy', 'EnergyDataController@store');
 
         $app->put('raspberrypis', 'RaspberryPiController@update');
     });

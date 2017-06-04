@@ -27,32 +27,41 @@ class EnergyDataController extends Controller
     public function store(Request $request)
     {
         $requestData = $request->all();
-        $requestData = $requestData['data'];
+        $data = $requestData['data'];
 
-        $metric = new TenSecondMetric;
+        foreach ($data as $dataRow) {
+            $metric = new TenSecondMetric;
 
-        $raspberryPi = RaspberryPi::find($requestData['raspberry_pi_id']);
+            $raspberryPi = RaspberryPi::find($dataRow['raspberry_pi_id']);
 
-        $metric->raspberryPi()->associate($raspberryPi);
-        $metric->mode = $requestData['mode'];
-        $metric->usage_now = $requestData['usage_now'];
-        $metric->redelivery_now = $requestData['redelivery_now'];
-        $metric->solar_now = $requestData['solar_now'];
-        $metric->usage_total_high = $requestData['usage_total_high'];
-        $metric->redelivery_total_high = $requestData['redelivery_total_high'];
-        $metric->usage_total_low = $requestData['usage_total_low'];
-        $metric->redelivery_total_low = $requestData['redelivery_total_low'];
-        $metric->solar_total = $requestData['solar_total'];
-        $metric->usage_gas_now = $requestData['usage_gas_now'];
-        $metric->usage_gas_total = $requestData['usage_gas_total'];
+            $metric->raspberryPi()->associate($raspberryPi);
+            $metric->mode = $dataRow['mode'];
+            $metric->usage_now = $dataRow['usage_now'];
+            $metric->redelivery_now = $dataRow['redelivery_now'];
+            $metric->solar_now = $dataRow['solar_now'];
+            $metric->usage_total_high = $dataRow['usage_total_high'];
+            $metric->redelivery_total_high = $dataRow['redelivery_total_high'];
+            $metric->usage_total_low = $dataRow['usage_total_low'];
+            $metric->redelivery_total_low = $dataRow['redelivery_total_low'];
+            $metric->solar_total = $dataRow['solar_total'];
+            $metric->usage_gas_now = $dataRow['usage_gas_now'];
+            $metric->usage_gas_total = $dataRow['usage_gas_total'];
 
-        $metric->save();
+            $success = $metric->save();
 
-        return $this->sendInsertJsonResponse(Response::HTTP_CREATED, 'received data', $requestData);
+            if (!$success) {
+                return response()->json([
+                    'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                    'message' => 'Energy data could not be saved'
+                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return $this->sendInsertJsonResponse(Response::HTTP_CREATED, 'Stored energy data');
     }
 
-    private function sendInsertJsonResponse($status, $message, $data = [])
+    private function sendInsertJsonResponse($status, $message)
     {
-        return response()->json(['status' => $status, 'message' => $message, 'data' => $data], $status);
+        return response()->json(['status' => $status, 'message' => $message], $status);
     }
 }
