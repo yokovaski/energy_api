@@ -61,6 +61,7 @@ class RaspberryPiController extends Controller
 
         $raspberryPi = RaspberryPi::create([
                 'ip_address' => $ipAddress,
+                'mac_address' => $requestInput['mac_address']
             ]
         );
 

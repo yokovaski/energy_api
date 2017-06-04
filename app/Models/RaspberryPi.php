@@ -12,7 +12,7 @@ class RaspberryPi extends Model
      * @var array
      */
     protected $fillable = [
-        'ip_address', 'name',
+        'ip_address', 'name', 'mac_address',
     ];
 
     public function user()
