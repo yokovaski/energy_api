@@ -47,6 +47,11 @@ class EnergyDataController extends Controller
             $metric->usage_gas_now = $dataRow['usage_gas_now'];
             $metric->usage_gas_total = $dataRow['usage_gas_total'];
 
+            if(isset($dataRow['created_at']) && isset($dataRow['updated_at'])) {
+                $metric->created_at = $dataRow['created_at'];
+                $metric->updated_at = $dataRow['updated_at'];
+            }
+
             $success = $metric->save();
 
             if (!$success) {
