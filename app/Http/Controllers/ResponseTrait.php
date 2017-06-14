@@ -142,7 +142,7 @@ trait ResponseTrait
      * Send this response when a resource is not found
      *
      * @param string $message
-     * @return string
+     * @return \Illuminate\Http\JsonResponse
      */
     public function sendNotFoundResponse($message = '')
     {

@@ -30,9 +30,26 @@ class EnergyDataController extends Controller
         $data = $requestData['data'];
 
         foreach ($data as $dataRow) {
-            $metric = new TenSecondMetric;
+            $raspberryPiId = 0;
 
-            $raspberryPi = RaspberryPi::find($dataRow['raspberry_pi_id']);
+            if(isset($dataRow['raspberry_pi_id'])) {
+                $raspberryPiId = $dataRow['raspberry_pi_id'];
+            } else {
+                $raspberryPiId = RaspberryPi::where('ip_address', '=', $request->getClientIp())->first()->id;
+            }
+
+            if($raspberryPiId < 1 || !is_int($raspberryPiId)) {
+                return $this->sendCustomResponse(Response::HTTP_BAD_REQUEST,
+                    "Invalid Raspberry Pi id: {$raspberryPiId}");
+            }
+
+            $raspberryPi = RaspberryPi::find($raspberryPiId);
+
+            if (!($raspberryPi instanceof RaspberryPi)) {
+                return $this->sendNotFoundResponse("Raspberry Pi could not be found with id: {$raspberryPiId}");
+            }
+
+            $metric = new TenSecondMetric;
 
             $metric->raspberryPi()->associate($raspberryPi);
             $metric->mode = $dataRow['mode'];
