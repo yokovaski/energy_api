@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\RaspberryPi;
+use App\Models\RaspberryPiError;
 use App\Transformers\RaspberryPiTransformer;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -91,5 +92,50 @@ class RaspberryPiController extends Controller
     public function update(Request $request)
     {
         return $this->sendNotYetImplementedResponse();
+    }
+
+    public function reportError(Request $request)
+    {
+        $requestData = $request->all();
+        $data = $requestData['data'];
+
+        foreach ($data as $dataRow) {
+            $raspberryPiId = 0;
+
+            if(isset($dataRow['raspberry_pi_id'])) {
+                $raspberryPiId = $dataRow['raspberry_pi_id'];
+            } else {
+                $raspberryPiId = RaspberryPi::where('ip_address', '=', $request->getClientIp())->first()->id;
+            }
+
+            if($raspberryPiId < 1 || !is_int($raspberryPiId)) {
+                return $this->sendCustomResponse(Response::HTTP_BAD_REQUEST,
+                    "Invalid Raspberry Pi id: {$raspberryPiId}");
+            }
+
+            $raspberryPi = RaspberryPi::find($raspberryPiId);
+
+            if (!($raspberryPi instanceof RaspberryPi)) {
+                return $this->sendNotFoundResponse("Raspberry Pi could not be found with id: {$raspberryPiId}");
+            }
+
+            $error = new RaspberryPiError();
+
+            $error->raspberryPi()->associate($raspberryPi);
+            $error->message = $dataRow['message'];
+            $error->endpoint = $dataRow['endpoint'];
+            $error->data_send = $dataRow['data_send'];
+
+            $success = $error->save();
+
+            if (!$success) {
+                return response()->json([
+                    'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                    'message' => 'Error could not be saved'
+                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return $this->sendInsertJsonResponse(Response::HTTP_CREATED, 'Stored error');
     }
 }

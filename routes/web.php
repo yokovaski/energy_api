@@ -38,6 +38,7 @@ $app->group(['prefix' => 'v1'], function () use ($app) {
         $app->post('energy', 'EnergyDataController@store');
 
         $app->put('raspberrypis', 'RaspberryPiController@update');
+        $app->post('raspberrypis/errors', 'RaspberryPiController@reportError');
     });
 });
 

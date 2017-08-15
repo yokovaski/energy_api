@@ -29,9 +29,13 @@ class EnergyDataController extends Controller
         $requestData = $request->all();
         $data = $requestData['data'];
 
-        foreach ($data as $dataRow) {
-            $raspberryPiId = 0;
 
+//        // In order to tackle a bug of python script that wraps the array in another array
+//        if (!array_key_exists('raspberry_pi_id', $data)) {
+//            $data = $data[0];
+//        }
+
+        foreach ($data as $dataRow) {
             if(isset($dataRow['raspberry_pi_id'])) {
                 $raspberryPiId = $dataRow['raspberry_pi_id'];
             } else {

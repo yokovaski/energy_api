@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class HourMetric extends Model
+class RaspberryPiCommand extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -12,10 +12,14 @@ class HourMetric extends Model
      * @var array
      */
     protected $fillable = [
-        'mode', 'usage_now', 'redelivery_now', 'solar_now', 'usage_total_high', 'redelivery_total_high',
-        'usage_total_low', 'redelivery_total_low', 'solar_total', 'usage_gas_now', 'usage_gas_total',
+        'shutdown', 'restart', 'update'
     ];
 
+    /**
+     * A Raspberry Pi Command belongs to one Raspberry Pi
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function raspberryPi()
     {
         return $this->belongsTo('App\Models\RaspberryPi');
