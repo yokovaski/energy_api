@@ -73,7 +73,7 @@ class EnergyDataController extends Controller
                 $metric->created_at = $dataRow['created_at'];
                 $metric->updated_at = $dataRow['updated_at'];
             } elseif (isset($dataRow['unix_timestamp'])) {
-                $createdAt = Carbon::createFromTimestampUTC($dataRow['unix_timestamp'])->toDateTimeString();
+                $createdAt = Carbon::createFromTimestamp($dataRow['unix_timestamp'], env("APP_TIMEZONE"))->toDateTimeString();
                 $metric->created_at = $createdAt;
                 $metric->updated_at = $createdAt;
             }
