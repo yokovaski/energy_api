@@ -19,3 +19,19 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Lumen framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+
+## Installation
+* Install apache.
+* Install PHP.
+
+Be sure the PHP installation meets the [requirements](https://lumen.laravel.com/docs/5.4) 
+
+* Install MySQL-server and create a database and user with rights on the database for the cls-api.
+* Clone the [repository](https://github.com/yokovaski/energy_api.git) with:
+`git clone https://github.com/yokovaski/energy_api.git`.
+* Change to the energy_api directory and run `composer install`.
+* Copy the `.env.example` file and change it's filename to `.env`. Set the correct parameters
+* Initiate the database with: `php artisan migrate:refresh --seed`. The database will be seeded with mockdata when using
+`--seed`. If you do not want to use this functionality, no admin user will be set.
+* Initiate OAuth with: `php artisan passport:install`.
+* Add the energy_api to the apache configuration and restart apache.
