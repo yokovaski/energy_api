@@ -42,3 +42,13 @@ $app->group(['prefix' => 'v1'], function () use ($app) {
     });
 });
 
+$app->group(['prefix' => 'v2'], function () use ($app) {
+    $app->group(['middleware' => 'rpi'], function () use ($app) {
+        $app->post('energy', 'EnergyController@store');
+
+        $app->get('/', function () use ($app) {
+            return $app->version();
+        });
+    });
+//    $app->post( 'energy', 'EnergyController@store');
+});

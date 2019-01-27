@@ -65,6 +65,7 @@ $app->configure('database');
 
  $app->routeMiddleware([
      'auth' => App\Http\Middleware\Authenticate::class,
+     'rpi' => App\Http\Middleware\RpiKey::class,
  ]);
 
 /*

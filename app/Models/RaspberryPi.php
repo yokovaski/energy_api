@@ -12,7 +12,7 @@ class RaspberryPi extends Model
      * @var array
      */
     protected $fillable = [
-        'ip_address', 'name', 'mac_address',
+        'ip_address', 'name', 'mac_address', 'rpi_key',
     ];
 
     /**
