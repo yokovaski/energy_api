@@ -60,6 +60,12 @@ class RaspberryPiController extends Controller
             return $this->respondWithItem($raspberryPi, $this->raspberryPiTransformer, Response::HTTP_OK);
         }
 
+        $raspberryPi = RaspberryPi::where('mac_address', $requestInput['mac_address'])->first();
+
+        if ($raspberryPi instanceof RaspberryPi) {
+            return $this->respondWithItem($raspberryPi, $this->raspberryPiTransformer, Response::HTTP_OK);
+        }
+
         $raspberryPi = RaspberryPi::create([
                 'ip_address' => $ipAddress,
                 'mac_address' => $requestInput['mac_address']
