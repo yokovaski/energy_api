@@ -11,6 +11,7 @@ namespace App\Http\Controllers;
 
 use App\Models\RaspberryPi;
 use App\Models\TenSecondMetric;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -73,6 +74,10 @@ class EnergyController extends Controller
             if(isset($dataRow['created_at']) && isset($dataRow['updated_at'])) {
                 $metric->created_at = $dataRow['created_at'];
                 $metric->updated_at = $dataRow['updated_at'];
+            } elseif (isset($dataRow['unix_timestamp'])) {
+                $createdAt = Carbon::createFromTimestamp($dataRow['unix_timestamp'], env("APP_TIMEZONE"))->toDateTimeString();
+                $metric->created_at = $createdAt;
+                $metric->updated_at = $createdAt;
             }
 
             $success = $metric->save();
